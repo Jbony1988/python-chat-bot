@@ -1,0 +1,7 @@
+.env
+
+
+
+# Except the project directory
+PYTHON/
+

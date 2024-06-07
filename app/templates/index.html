@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Tutor Chatbot</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .fade-out {
+            transition: opacity 3s ease-out;
+        }
+        .terminal {
+            background-color: #1a1a1a;
+            color: #c5c6c7;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #4a5568;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function copyToClipboard(button) {
+            const codeText = button.nextElementSibling.innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCustomAlert('Code copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        function showCustomAlert(message) {
+            var alertBox = document.createElement('div');
+            alertBox.id = 'customAlert';
+            alertBox.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded shadow-md fade-out';
+            alertBox.innerHTML = `<span>${message}</span><button onclick="closeCustomAlert()" class="ml-4 bg-transparent text-white text-xl font-bold focus:outline-none">&times;</button>`;
+            document.body.appendChild(alertBox);
+            fadeOutCustomAlert(alertBox);
+        }
+
+        function fadeOutCustomAlert(alertBox) {
+            setTimeout(function() {
+                alertBox.style.opacity = '0';
+                setTimeout(function() {
+                    alertBox.remove();
+                }, 3000);
+            }, 3000);
+        }
+
+        function closeCustomAlert() {
+            var alertBox = document.getElementById('customAlert');
+            if (alertBox) {
+                alertBox.remove();
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 h-screen overflow-auto flex flex-col justify-center items-center py-6">
+    <div class="max-w-4xl w-full bg-white shadow-md rounded p-8">
+        <h1 class="text-2xl font-bold mb-4 text-center">Python Tutor Chatbot</h1>
+        {% if user_input %}
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-semibold">Chatbot response:</h2>
+                </div>
+                <div class="p-4 border border-gray-300 rounded bg-gray-50 max-h-60 overflow-y-auto">
+                    <!-- Render response with code snippets styled as terminal -->
+                    <div id="responseText" class="text-gray-800">
+                        {% autoescape false %}
+                        {{ response | safe }}
+                        {% endautoescape %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <form method="POST" class="w-full">
+            <label for="user_input" class="block text-sm font-medium text-gray-700 mb-2">Ask a question about Python programming:</label>
+            <textarea id="user_input" name="user_input" rows="4" required
+                      class="border border-gray-300 rounded-md px-3 py-2 w-full mb-4 focus:outline-none focus:ring focus:border-blue-300"></textarea>
+            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
